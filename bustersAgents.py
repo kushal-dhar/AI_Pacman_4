@@ -162,5 +162,35 @@ class GreedyBustersAgent(BustersAgent):
         livingGhostPositionDistributions = \
             [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if livingGhosts[i+1]]
+
+        # print "livingGhosts: ", livingGhosts
+        # print "pacmanPositons: ", pacmanPosition
+        # print "legal pacman actions: ", legal
+        #
+        # print "livingGhostPositionDistributions: ", livingGhostPositionDistributions
+
+
+
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        localMax = []
+        for belief in livingGhostPositionDistributions:
+            print "belief: ", belief
+            localMax.append(belief.argMax())
+
+        print "livingGhostPositionDistributions: ", livingGhostPositionDistributions
+        print "localMax: ", localMax
+
+
+        goalCoordinate, goalProbability = None, 0
+        # for inxdex, coordinate in enumerate(localMax):
+        #     if livingGhostPositionDistributions[index][coordinate] >= goalProbability:
+        #         goalCoordinate, goalProbability = coordinate, livingGhostPositionDistributions[index][coordinate]
+        #
+        # temp = []
+        # for action in legal:
+        #     nextLocation = Actions.getSuccessor(pacmanPosition, action)
+        #     temp.append((self.distancer.getDistance(nextLocation, goalCoordinate), action))
+        # return min(temp)[1]
+
+        # util.raiseNotDefined()

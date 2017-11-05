@@ -149,16 +149,30 @@ class ExactInference(InferenceModule):
         pacmanPosition = gameState.getPacmanPosition()
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        # util.raiseNotDefined()
 
         # Replace this code with a correct observation update
         # Be sure to handle the "jail" edge case where the ghost is eaten
         # and noisyDistance is None
         allPossible = util.Counter()
-        for p in self.legalPositions:
-            trueDistance = util.manhattanDistance(p, pacmanPosition)
-            if emissionModel[trueDistance] > 0:
-                allPossible[p] = 1.0
+        #if pacman captured a ghost
+        if(noisyDistance == None):
+            # print "self.getJailPosition(): ", self.getJailPosition()
+            #set belief for that the captured ghost position as 1.0
+            allPossible[self.getJailPosition()] = 1.0
+        else :
+            #For all the possible legal positions
+            for p in self.legalPositions:
+                trueDistance = util.manhattanDistance(p, pacmanPosition)
+                #if emissionModel provides positive value than update the belief for that position
+                #by taking the product of the previous belief and the current emission model value
+                #for that distance
+                if emissionModel[trueDistance] > 0:
+                   allPossible[p] = emissionModel[trueDistance] * self.beliefs[p]
+        # print "allPosible: ", allPossible
+        # print "pacmanPosition: ", pacmanPosition
+
 
         "*** END YOUR CODE HERE ***"
 
@@ -219,8 +233,20 @@ class ExactInference(InferenceModule):
         positions after a time update from a particular position.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
 
+
+        allPossible = util.Counter()
+        for oldPos in self.legalPositions:
+            # print oldPos
+            newPosDist = self.getPositionDistribution(self.setGhostPosition(gameState, oldPos))
+            # print "newPostDist: ", newPosDist
+            for newPos, prob in newPosDist.items():
+                # print newPos, prob
+                allPossible[newPos] += prob * self.beliefs[oldPos]
+        # print "allPossible: ", allPossible
+        self.beliefs = allPossible
+
+        # util.raiseNotDefined()
     def getBeliefDistribution(self):
         return self.beliefs
 
