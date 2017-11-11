@@ -159,8 +159,7 @@ class GreedyBustersAgent(BustersAgent):
         pacmanPosition = gameState.getPacmanPosition()
         legal = [a for a in gameState.getLegalPacmanActions()]
         livingGhosts = gameState.getLivingGhosts()
-        livingGhostPositionDistributions = \
-            [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
+        livingGhostPositionDistributions = [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if livingGhosts[i+1]]
 
         # print "livingGhosts: ", livingGhosts
@@ -169,28 +168,23 @@ class GreedyBustersAgent(BustersAgent):
         #
         # print "livingGhostPositionDistributions: ", livingGhostPositionDistributions
 
-
-
-        "*** YOUR CODE HERE ***"
-
-        localMax = []
+        favBeliefs = []
         for belief in livingGhostPositionDistributions:
-            print "belief: ", belief
-            localMax.append(belief.argMax())
+            favBeliefs.append(belief.argMax())
 
-        print "livingGhostPositionDistributions: ", livingGhostPositionDistributions
-        print "localMax: ", localMax
+        ghostPossiblePosition = None
+        ghostPossibleProbability = 0
 
+        for index, coordinate in enumerate(favBeliefs):
+            if(livingGhostPositionDistributions[index][coordinate] >= ghostPossibleProbability):
+                ghostPossibleProbability = livingGhostPositionDistributions[index][coordinate]
+                ghostPossiblePosition = coordinate
 
-        goalCoordinate, goalProbability = None, 0
-        # for inxdex, coordinate in enumerate(localMax):
-        #     if livingGhostPositionDistributions[index][coordinate] >= goalProbability:
-        #         goalCoordinate, goalProbability = coordinate, livingGhostPositionDistributions[index][coordinate]
-        #
-        # temp = []
-        # for action in legal:
-        #     nextLocation = Actions.getSuccessor(pacmanPosition, action)
-        #     temp.append((self.distancer.getDistance(nextLocation, goalCoordinate), action))
-        # return min(temp)[1]
+        nextPossibbleSteps = []
+        for action in legal:
+            nextStep = Actions.getSuccessor(pacmanPosition,action);
+            distanceBtwGhostAndNextPosition = self.distancer.getDistance(nextStep, ghostPossiblePosition)
+            nextPossibbleSteps.append((distanceBtwGhostAndNextPosition, action))
 
-        # util.raiseNotDefined()
+        closestNextStep = min(nextPossibbleSteps)
+        return closestNextStep[1]
