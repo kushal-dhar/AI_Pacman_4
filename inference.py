@@ -148,33 +148,26 @@ class ExactInference(InferenceModule):
         emissionModel = busters.getObservationDistribution(noisyDistance)
         pacmanPosition = gameState.getPacmanPosition()
 
-        "*** YOUR CODE HERE ***"
-
-        # util.raiseNotDefined()
-
         # Replace this code with a correct observation update
         # Be sure to handle the "jail" edge case where the ghost is eaten
         # and noisyDistance is None
-        locations = util.Counter()
+        allPossible = util.Counter()
         #if pacman captured a ghost
         if(noisyDistance == None):
             #set belief for that the captured ghost position as 1.0
-            locations[self.getJailPosition()] = 1.0
+            allPossible[self.getJailPosition()] = 1.0
         else :
             #For all the possible legal positions
             for p in self.legalPositions:
-                trueDistance = util.manhattanDistance(p, pacmanPosition)
                 #if emissionModel provides positive value than update the belief for that position
                 #by taking the product of the previous belief and the current emission model value
                 #for that distance
+                trueDistance = util.manhattanDistance(p, pacmanPosition)
                 if emissionModel[trueDistance] > 0:
-                   locations[p] = emissionModel[trueDistance] * self.beliefs[p]
+                    allPossible[p] = emissionModel[trueDistance]*self.beliefs[p]
 
-
-        "*** END YOUR CODE HERE ***"
-
-        locations.normalize()
-        self.beliefs = locations
+        allPossible.normalize()
+        self.beliefs = allPossible
 
     def elapseTime(self, gameState):
         """
@@ -229,16 +222,15 @@ class ExactInference(InferenceModule):
         are used and how they combine to give us a belief distribution over new
         positions after a time update from a particular position.
         """
-        locations = util.Counter()
-        for previousPos in self.legalPositions:
-            # print oldPos
-            nextPosDist = self.getPositionDistribution(self.setGhostPosition(gameState, previousPos))
-            # print "nextPosDist: ", nextPosDist
-            for nextPos, probality in nextPosDist.items():
-                # print newPos, probality
-                locations[nextPos] = locations[nextPos] + (probality * self.beliefs[previousPos])
-        # print "locations: ", locations
-        self.beliefs = locations
+        allPossible = util.Counter()
+        #Take all the current positions i.e. all the legal positions
+        for currentPosition in self.legalPositions:
+            #Fetch Distribution for all current postions
+            distribution = self.getPositionDistribution(self.setGhostPosition(gameState, currentPosition))
+            #populate beliefs for the current positions distributions
+            for nextPosition, probality in distribution.items():
+                allPossible[nextPosition] = allPossible[nextPosition] + (probality * self.beliefs[currentPosition])
+        self.beliefs = allPossible
 
     def getBeliefDistribution(self):
         return self.beliefs
