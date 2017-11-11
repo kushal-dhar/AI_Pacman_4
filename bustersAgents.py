@@ -183,10 +183,12 @@ class GreedyBustersAgent(BustersAgent):
         nextPossibbleSteps = []
 
         #Find the coordiante with the highest pribability of having a ghost
-        for index, coordinate in enumerate(favBeliefs):
+        index = 0
+        for coordinate in favBeliefs:
             if(ghostPositionDistributions[index][coordinate] >= ghostPossibleProbability):
                 ghostPossibleProbability = ghostPositionDistributions[index][coordinate]
                 ghostPossiblePosition = coordinate
+            index += 1
 
 
         nextPossibbleSteps = []
