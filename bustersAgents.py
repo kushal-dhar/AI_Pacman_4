@@ -188,8 +188,6 @@ class GreedyBustersAgent(BustersAgent):
                 ghostPossibleProbability = ghostPositionDistributions[index][coordinate]
                 ghostPossiblePosition = coordinate
 
-
-        nextPossibbleSteps = []
         #Find the next legal positions closest to ghost coordinate
         for action in legalPositions:
             nextStep = Actions.getSuccessor(pacmanPosition,action)
