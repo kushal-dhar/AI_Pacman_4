@@ -156,29 +156,38 @@ class GreedyBustersAgent(BustersAgent):
              indices into this list should be 1 less than indices into the
              gameState.getLivingGhosts() list.
         """
+
+        #Fetch Pacman Position
         pacmanPosition = gameState.getPacmanPosition()
+        #Fetch Legal Postions
         legalPositions = [a for a in gameState.getLegalPacmanActions()]
+        #Take all ghost postions, to find out the closest ghost
         ghosts = gameState.getLivingGhosts()
+        #Get ghost distribution for all livin ghosts
         ghostPositionDistributions = [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if ghosts[i+1]]
 
         favBeliefs = []
+        #find coordinates where ghost has max probability
         for belief in ghostPositionDistributions:
             favBeliefs.append(belief.argMax())
 
         ghostPossiblePosition = None
         ghostPossibleProbability = 0
 
+        #Find the coordiante with the highest pribability of having a ghost
         for index, coordinate in enumerate(favBeliefs):
             if(ghostPositionDistributions[index][coordinate] >= ghostPossibleProbability):
                 ghostPossibleProbability = ghostPositionDistributions[index][coordinate]
                 ghostPossiblePosition = coordinate
 
         nextPossibbleSteps = []
+        #Find the next legal positions closest to ghost coordinate
         for action in legalPositions:
             nextStep = Actions.getSuccessor(pacmanPosition,action);
             distanceBtwGhostAndNextPosition = self.distancer.getDistance(nextStep, ghostPossiblePosition)
             nextPossibbleSteps.append((distanceBtwGhostAndNextPosition, action))
 
+        #return the next step
         closestNextStep = min(nextPossibbleSteps)
-        return closestNextStep[1]
+        return closestNextStep[1] #(distance, NextMove)
