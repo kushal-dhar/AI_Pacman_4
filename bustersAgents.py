@@ -157,31 +157,25 @@ class GreedyBustersAgent(BustersAgent):
              gameState.getLivingGhosts() list.
         """
         pacmanPosition = gameState.getPacmanPosition()
-        legal = [a for a in gameState.getLegalPacmanActions()]
-        livingGhosts = gameState.getLivingGhosts()
-        livingGhostPositionDistributions = [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
-             if livingGhosts[i+1]]
-
-        # print "livingGhosts: ", livingGhosts
-        # print "pacmanPositons: ", pacmanPosition
-        # print "legal pacman actions: ", legal
-        #
-        # print "livingGhostPositionDistributions: ", livingGhostPositionDistributions
+        legalPositions = [a for a in gameState.getLegalPacmanActions()]
+        ghosts = gameState.getLivingGhosts()
+        ghostPositionDistributions = [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
+             if ghosts[i+1]]
 
         favBeliefs = []
-        for belief in livingGhostPositionDistributions:
+        for belief in ghostPositionDistributions:
             favBeliefs.append(belief.argMax())
 
         ghostPossiblePosition = None
         ghostPossibleProbability = 0
 
         for index, coordinate in enumerate(favBeliefs):
-            if(livingGhostPositionDistributions[index][coordinate] >= ghostPossibleProbability):
-                ghostPossibleProbability = livingGhostPositionDistributions[index][coordinate]
+            if(ghostPositionDistributions[index][coordinate] >= ghostPossibleProbability):
+                ghostPossibleProbability = ghostPositionDistributions[index][coordinate]
                 ghostPossiblePosition = coordinate
 
         nextPossibbleSteps = []
-        for action in legal:
+        for action in legalPositions:
             nextStep = Actions.getSuccessor(pacmanPosition,action);
             distanceBtwGhostAndNextPosition = self.distancer.getDistance(nextStep, ghostPossiblePosition)
             nextPossibbleSteps.append((distanceBtwGhostAndNextPosition, action))
