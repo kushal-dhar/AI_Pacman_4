@@ -164,8 +164,13 @@ class GreedyBustersAgent(BustersAgent):
         #Take all ghost postions, to find out the closest ghost
         ghosts = gameState.getLivingGhosts()
         #Get ghost distribution for all livin ghosts
-        ghostPositionDistributions = [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
-             if ghosts[i+1]]
+
+        index = 0
+        ghostPositionDistributions = []
+        for beliefs in self.ghostBeliefs:
+            if ghosts[index+1]:
+                ghostPositionDistributions.append(beliefs)
+            index += 1
 
         favBeliefs = []
         #find coordinates where ghost has max probability
