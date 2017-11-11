@@ -158,7 +158,6 @@ class ExactInference(InferenceModule):
         allPossible = util.Counter()
         #if pacman captured a ghost
         if(noisyDistance == None):
-            # print "self.getJailPosition(): ", self.getJailPosition()
             #set belief for that the captured ghost position as 1.0
             allPossible[self.getJailPosition()] = 1.0
         else :
@@ -170,8 +169,6 @@ class ExactInference(InferenceModule):
                 #for that distance
                 if emissionModel[trueDistance] > 0:
                    allPossible[p] = emissionModel[trueDistance] * self.beliefs[p]
-        # print "allPosible: ", allPossible
-        # print "pacmanPosition: ", pacmanPosition
 
 
         "*** END YOUR CODE HERE ***"

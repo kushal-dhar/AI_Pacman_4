@@ -170,10 +170,17 @@ class GreedyBustersAgent(BustersAgent):
         favBeliefs = []
         #find coordinates where ghost has max probability
         for belief in ghostPositionDistributions:
-            favBeliefs.append(belief.argMax())
+            maxBelief = 0
+            maxCoordinate = 0
+            for coor in belief:
+                if belief[coor] > maxBelief:
+                    maxBelief = belief[coor]
+                    maxCoordinate = coor
+            favBeliefs.append(maxCoordinate)
 
         ghostPossiblePosition = None
         ghostPossibleProbability = 0
+        nextPossibbleSteps = []
 
         #Find the coordiante with the highest pribability of having a ghost
         for index, coordinate in enumerate(favBeliefs):
@@ -181,10 +188,11 @@ class GreedyBustersAgent(BustersAgent):
                 ghostPossibleProbability = ghostPositionDistributions[index][coordinate]
                 ghostPossiblePosition = coordinate
 
+
         nextPossibbleSteps = []
         #Find the next legal positions closest to ghost coordinate
         for action in legalPositions:
-            nextStep = Actions.getSuccessor(pacmanPosition,action);
+            nextStep = Actions.getSuccessor(pacmanPosition,action)
             distanceBtwGhostAndNextPosition = self.distancer.getDistance(nextStep, ghostPossiblePosition)
             nextPossibbleSteps.append((distanceBtwGhostAndNextPosition, action))
 
